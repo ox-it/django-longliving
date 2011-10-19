@@ -1,0 +1,5 @@
+MANIFEST
+*.pyc
+dist
+.project
+.pydevproject
