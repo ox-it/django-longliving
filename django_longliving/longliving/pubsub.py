@@ -54,5 +54,6 @@ class PubSubDispatcherThread(LonglivingThread):
             watchers.append({'callable': callable,
                              'meta': meta})
             channels |= meta.channels
+        watchers.sort(lambda w: w.priority)
 
         return watchers, channels
