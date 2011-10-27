@@ -27,6 +27,7 @@ class PubSubDispatcherThread(LonglivingThread):
                 channel, data = message['channel'], self.unpack(message['data'])
                 for watcher in self._watchers:
                     if channel in watcher['meta'].channels:
+                        logger.debug("Passing pubsub item for %r to %r", channel, watcher['path'])
                         try:
                             watcher['callable'](channel, data)
                         except Exception:
@@ -52,8 +53,11 @@ class PubSubDispatcherThread(LonglivingThread):
                 raise ImproperlyConfigured("%r hasn't been decorated with @pubsub_watcher" % path)
 
             watchers.append({'callable': callable,
-                             'meta': meta})
+                             'meta': meta,
+                             'path': path})
             channels |= meta.channels
         watchers.sort(lambda w: w.priority)
+
+        logger.debug("Found %d watchers over %d channels", len(watchers), len(channels))
 
         return watchers, channels
