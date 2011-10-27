@@ -64,7 +64,7 @@ setup(
     description="A framework for long-living worker processes for Django using redis",
     author='Oxford University Computing Services',
     author_email='infodev@oucs.ox.ac.uk',
-    version='0.2',
+    version='0.2.1',
     packages=packages,
     license='BSD',
     url='https://github.com/oucs/django-longliving',
