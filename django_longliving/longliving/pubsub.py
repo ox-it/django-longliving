@@ -24,12 +24,16 @@ class PubSubDispatcherThread(LonglivingThread):
             for message in pubsub.listen():
                 if self._bail.isSet():
                     break
-                channel, data = message['channel'], self.unpack(message['data'])
+                kwargs = {'channel': message['channel'],
+                          'data': message['data'],
+                          'client': message['client']}
                 for watcher in self._watchers:
-                    if channel in watcher['meta'].channels:
-                        logger.debug("Passing pubsub item for %r to %r", channel, watcher['path'])
+                    if kwargs['channel'] in watcher['meta'].channels:
+                        logger.debug("Passing pubsub item for %r to %r", kwargs['channel'], watcher['path'])
                         try:
-                            watcher['callable'](channel, data)
+                            watcher_kwargs = dict((k, kwargs[k]) for k in kwargs
+                                                      if k in watcher['meta'].args)
+                            watcher['callable'](**watcher_kwargs)
                         except Exception:
                             logger.exception("PubSub watcher exited unexpectedly")
 
@@ -56,7 +60,7 @@ class PubSubDispatcherThread(LonglivingThread):
                              'meta': meta,
                              'path': path})
             channels |= meta.channels
-        watchers.sort(lambda w: w.priority)
+        watchers.sort(key=lambda w: w['meta'].priority)
 
         logger.debug("Found %d watchers over %d channels", len(watchers), len(channels))
 
