@@ -25,8 +25,8 @@ class PubSubDispatcherThread(LonglivingThread):
                 if self._bail.isSet():
                     break
                 kwargs = {'channel': message['channel'],
-                          'data': message['data'],
-                          'client': message['client']}
+                          'data': self.unpack(message['data']),
+                          'client': client}
                 for watcher in self._watchers:
                     if kwargs['channel'] in watcher['meta'].channels:
                         logger.debug("Passing pubsub item for %r to %r", kwargs['channel'], watcher['path'])
