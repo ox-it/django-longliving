@@ -10,7 +10,7 @@ class LonglivingThread(threading.Thread):
         super(LonglivingThread, self).__init__()
     def watch_queue(self, client, name, unpack=False):
         while not self._bail.isSet():
-            result = client.blpop(name, 2)
+            result = client.brpop(name, 2)
             if not result:
                 continue
             key, item = result
