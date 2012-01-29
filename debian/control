@@ -1,11 +1,11 @@
 Source: python-django-longliving
+Section: python
 Priority: extra
 Maintainer: Alexander Dutton <alexander.dutton@oucs.ox.ac.uk>
 Build-Depends: debhelper (>= 7.0.50~),
-               python-all-dev,
+               python-all,
                python-support
 Standards-Version: 3.8.4
-Section: libs
 Homepage: https://github.com/oucs/django-longliving
 #Vcs-Git: git://git.debian.org/collab-maint/python-django-longliving.git
 #Vcs-Browser: http://git.debian.org/?p=collab-maint/python-django-longliving.git;a=summary
@@ -15,7 +15,7 @@ Section: libs
 Architecture: all
 Depends: ${misc:Depends},
          ${python:Depends},
-         python-django,
+         python-django (>= 1.2),
          python-redis
 Description: A framework for long-living worker processes for Django using redis.
 
