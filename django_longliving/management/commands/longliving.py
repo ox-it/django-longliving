@@ -29,9 +29,10 @@ class Command(BaseCommand):
 
     def get_threads(self, bail):
         try:
-            longliving_classes = settings.LONGLIVING_CLASSES
+            longliving_classes = set(settings.LONGLIVING_CLASSES)
         except AttributeError:
             raise ImproperlyConfigured("LONGLIVING_CLASSES setting missing.")
+        longliving_classes.add('django_longliving.longliving.stop_watcher.StopWatcherThread')
 
         threads = []
         for class_path in longliving_classes:
@@ -81,8 +82,9 @@ class Command(BaseCommand):
             logger.info("Longliving threads started")
 
             try:
-                while True:
+                while not bail.isSet():
                     time.sleep(1)
+                logger.info("Shutting down")
             except KeyboardInterrupt:
                 logger.info("Caught KeyboardInterrupt; shutting down.")
                 bail.set()
