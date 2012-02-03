@@ -1,6 +1,7 @@
 import logging
 from optparse import make_option
 import os
+import signal
 import sys
 import threading
 import time
@@ -26,6 +27,9 @@ class Command(BaseCommand):
             default=None,
             help='Log level'),
         )
+
+    def sigterm(self, signo, frame):
+        self.bail.set()
 
     def get_threads(self, bail):
         try:
@@ -72,8 +76,10 @@ class Command(BaseCommand):
         logger.info("Starting longliving process")
 
         try:
-            bail = threading.Event()
-            threads = self.get_threads(bail)
+            self.bail = threading.Event()
+            signal.signal(signal.SIGTERM, self.sigterm)
+            signal.signal(signal.SIGINT, self.sigterm)
+            threads = self.get_threads(self.bail)
 
             for thread in threads:
                 thread.start()
@@ -85,7 +91,7 @@ class Command(BaseCommand):
                     time.sleep(1)
             except KeyboardInterrupt:
                 logger.info("Caught KeyboardInterrupt; shutting down.")
-                bail.set()
+                self.bail.set()
                 redis_client.publish(LonglivingThread.BAIL_CHANNEL, '')
 
             for i in range(5):
