@@ -88,7 +88,7 @@ class Command(BaseCommand):
             logger.info("Longliving threads started")
 
             try:
-                while not bail.isSet():
+                while not self.bail.isSet():
                     time.sleep(1)
                 logger.info("Shutting down")
             except KeyboardInterrupt:
