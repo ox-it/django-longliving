@@ -6,16 +6,19 @@ Build-Depends: debhelper (>= 7.0.50~),
                python-all,
                python-support
 Standards-Version: 3.8.4
+X-Python-Version: >= 2.6
 Homepage: https://github.com/oucs/django-longliving
-#Vcs-Git: git://git.debian.org/collab-maint/python-django-longliving.git
-#Vcs-Browser: http://git.debian.org/?p=collab-maint/python-django-longliving.git;a=summary
+Vcs-Git: git://github.com/oucs/django-conneg.git
 
 Package: python-django-longliving
-Section: libs
+Section: python
 Architecture: all
 Depends: ${misc:Depends},
          ${python:Depends},
          python-django (>= 1.2),
          python-redis
 Description: A framework for long-living worker processes for Django using redis.
+ django-longliving provides a simple framework for running Python threads in a
+ separate process as part of a Django application. Inter-process communication
+ is provided by redis queues and the redis publish-subscribe framework.
 
