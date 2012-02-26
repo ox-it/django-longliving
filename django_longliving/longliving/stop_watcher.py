@@ -1,7 +1,7 @@
 from django_longliving.base import LonglivingThread
 
 class StopWatcherThread(LonglivingThread):
-    STOP_CHANNEL = 'django_longliving:stop-channel'
+    STOP_CHANNEL = 'django-longliving:stop-channel'
 
     def run(self):
         client = self.get_redis_client()
@@ -15,6 +15,7 @@ class StopWatcherThread(LonglivingThread):
                     break
                 if message['channel'] == StopWatcherThread.STOP_CHANNEL:
                     self._bail.set()
+                    client.publish(LonglivingThread.BAIL_CHANNEL, '')
                     break
         finally:
             pubsub.unsubscribe(StopWatcherThread.STOP_CHANNEL)
