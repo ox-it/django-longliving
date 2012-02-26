@@ -1,3 +1,9 @@
+python-django-longliving (0.4) unstable; urgency=low
+
+  * Refactored, and fixed shutting down problems.
+
+ -- Alexander Dutton <alexander.dutton@oucs.ox.ac.uk>  Sun, 26 Feb 2012 11:53:33 +0000
+
 python-django-longliving (0.3) unstable; urgency=low
 
   * Initial Release.

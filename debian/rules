@@ -7,3 +7,6 @@ override_dh_clean:
 	dh_clean
 	rm -rf build
 
+override_dh_auto_test:
+	django-admin test --settings=django_longliving.tests.settings --pythonpath=.
+
