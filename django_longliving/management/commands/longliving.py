@@ -31,7 +31,7 @@ class Command(BaseCommand):
         log_level = options.pop('loglevel', None)
         if not log_level:
             return
-        stream = options.pop('logstream', None) or sys.stderr
+        stream = options.pop('logfile', None) or sys.stderr
         if isinstance(stream, basestring):
             stream = open(stream, 'a')
         logging.basicConfig(stream=stream,
