@@ -3,6 +3,7 @@ import os
 import sys
 import threading
 import time
+import traceback
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -39,10 +40,32 @@ class ThreadRunner(object):
                 raise ImproperlyConfigured("Module %r has no attribute %r" % (module_name, class_name))
             if not issubclass(cls, threading.Thread):
                 raise ImproperlyConfigured("%r must be a subclass of threading.Thread" % class_path)
-            thread = cls(self.bail)
-            thread.name = class_path
+            thread = threading.Thread(target=self.thread_container,
+                                      args=(class_path, cls),
+                                      name=class_path)
             threads.append(thread)
         return threads
+
+    def thread_container(self, class_path, cls):
+        restart_delay = 1
+
+        while True:
+            started = time.time()
+            thread = cls(self.bail)
+            logger.info("Starting thread: %s", class_path)
+            try:
+                thread.run()
+            except Exception:
+                restart_delay -= (time.time() - started) / 10
+                restart_delay = min(max(1, restart_delay * 2), 7200) # back off exponentially, with outer bounds of 1 second and two hours.
+                logger.exception("Thread exited abnormally: %s, restarting in %.2f seconds", class_path, restart_delay)
+                time.sleep(restart_delay)
+            else:
+                if self.bail.isSet():
+                    logger.info("Thread exited normally: %s", class_path)
+                else:
+                    logger.warning("Thread exited normally, but probably shouldn't have: %s", class_path)
+                break
 
     def stop(self, signo=None, frame=None):
         self.bail.set()
