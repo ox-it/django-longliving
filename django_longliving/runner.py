@@ -110,7 +110,11 @@ class ThreadRunner(object):
                 for thread in threads[:]:
                     thread.join(5)
                     if thread.isAlive():
-                        logger.warning("Couldn't join thread %r on attempt %i/5", thread.name, i + 1)
+                        frame = sys._current_frames()[thread.ident]
+                        try:
+                            logger.warning("Couldn't join thread %r on attempt %i/5:\n%s", thread.name, i + 1, ''.join(traceback.format_stack(frame)))
+                        finally:
+                            del frame
                     else:
                         threads.remove(thread)
 
