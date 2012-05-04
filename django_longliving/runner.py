@@ -59,7 +59,16 @@ class ThreadRunner(object):
                 restart_delay -= (time.time() - started) / 10
                 restart_delay = min(max(1, restart_delay * 2), 7200) # back off exponentially, with outer bounds of 1 second and two hours.
                 logger.exception("Thread exited abnormally: %s, restarting in %.2f seconds", class_path, restart_delay)
-                time.sleep(restart_delay)
+
+                restart_target = time.time() + restart_delay
+                while time.time() < restart_target:
+                    time.sleep(max(0, min(restart_target - time.time(), 2)))
+                    if self.bail.isSet():
+                        logger.info("Thread in restart hiatus when told to shut down: %s", class_path)
+                        break
+                if self.bail.isSet():
+                    break
+
             else:
                 if self.bail.isSet():
                     logger.info("Thread exited normally: %s", class_path)
