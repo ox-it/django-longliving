@@ -52,7 +52,7 @@ class PubSubDispatcherThread(LonglivingThread):
             module_path, callable_name = path.rsplit('.', 1)
             module = import_module(module_path)
             callable = getattr(module, callable_name)
-            meta = getattr(callable, '_pubsub_watcher_meta')
+            meta = getattr(callable, '_pubsub_watcher_meta', None)
             if not isinstance(meta, PubSubWatcherMeta):
                 raise ImproperlyConfigured("%r hasn't been decorated with @pubsub_watcher" % path)
 
