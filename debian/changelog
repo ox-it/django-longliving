@@ -2,8 +2,9 @@ python-django-longliving (0.5) unstable; urgency=low
 
   * Threads are now auto-restarted if they fall over with an exception.
   * Prints call stack for threads that don't stop when asked to.
+  * Improved handling of misconfigured pubsub watchers.
 
- -- Alexander Dutton <alexander.dutton@oucs.ox.ac.uk>  Mon, 27 Feb 2012 12:08:23 +0000
+ -- Alexander Dutton <alexander.dutton@oucs.ox.ac.uk>  Fri, 4 May 2012 14:33:45 +0100
 
 python-django-longliving (0.4.2) unstable; urgency=low
 
